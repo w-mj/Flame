@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.10)
+project(flame)
+
+set(CMAKE_CXX_STANDARD 11)
+
+add_executable(flame main.cpp Particle.cpp Particle.h Flame.cpp Flame.h)
+target_link_libraries(flame SDL2)
