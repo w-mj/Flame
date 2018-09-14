@@ -3,6 +3,7 @@
 //
 
 #include <ctime>
+#include <iostream>
 #include "Particle.h"
 
 Particle::Particle(int x, int y, int w, int h): rect {x, y, w, h} {

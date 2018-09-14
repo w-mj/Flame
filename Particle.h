@@ -20,9 +20,9 @@ public:
 
     SDL_Rect rect;
     Uint8 r, g, b, a;
+    clock_t active_time;
 
 private:
-    clock_t active_time;
     bool is_active = false;
     void (*move_animate)(Particle*, clock_t, clock_t) = nullptr;
     void (*color_animate)(Particle*, clock_t, clock_t) = nullptr;

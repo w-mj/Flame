@@ -3,11 +3,16 @@
 //
 
 #include "Flame.h"
+#define CLOCKS_PER_MS ((uint)CLOCKS_PER_SEC / 1000)
 
 void particle_move_animate(Particle* particle, clock_t start_time, clock_t draw_time) {
-    particle->rect.y = particle->rect.y - static_cast<int>((draw_time - start_time) / CLOCKS_PER_SEC);
-    if (particle->rect.y < 100)
-        particle->deactivate();
+    int delta = uint(draw_time - start_time) / CLOCKS_PER_MS;
+    if (delta) {
+        particle->rect.y = particle->rect.y - delta;
+        particle->active_time = draw_time;
+        if (particle->rect.y < 0)
+            particle->deactivate();
+    }
 }
 
 Flame::Flame(int p_cnt, int area_x, int area_y, int area_w, int area_h, int par_w, int par_h):
@@ -33,8 +38,9 @@ void Flame::update(SDL_Renderer *renderer) {
         if (!particle->isActive()) {
             particle->reset(x + dis_w(gen), y + dis_h(gen));
             particle->activate();
+        } else {
+            particle->draw(renderer, current_time);
         }
-        particle->draw(renderer, current_time);
     }
 }
 
