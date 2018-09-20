@@ -9,10 +9,8 @@ int main() {
     }
     SDL_Window *window = SDL_CreateWindow("Flame", 100, 100, 1024, 768, SDL_WINDOW_SHOWN);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    // SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 1024, 768);
-    // SDL_SetRenderTarget(renderer, texture);
 
-    Flame flame(50, 20, 700, 100, 68, 5, 5);
+    Flame flame(1000, 500, 350, 70, 70, 2, 2);
 
     SDL_Event event;
     bool quit = false;

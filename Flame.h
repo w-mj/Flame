@@ -23,6 +23,7 @@ private:
     std::uniform_int_distribution<int> dis_h;
     std::default_random_engine gen;
     std::vector<Particle*> particle_list;
+    std::normal_distribution<float> normal_distribution;
 };
 
 
