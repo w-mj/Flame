@@ -52,7 +52,7 @@ void Flame::init_particle(Particle &p) {
 
     p.position = {normal(gen), dis_h(gen)};
     p.velocity = {max_velocity.x * percent(gen), max_velocity.y * percent(gen)};
-    p.accelerate = {0, -0.4};
+    p.accelerate = {0, -0.01};
     p.alpha = 255;
     p.size = 5;
     p.life = life(gen);
