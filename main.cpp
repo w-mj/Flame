@@ -10,7 +10,7 @@ int main() {
     SDL_Window *window = SDL_CreateWindow("Flame", 100, 100, 1024, 768, SDL_WINDOW_SHOWN);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    Flame flame(1000, 500, 350, 70, 70, 2, 2);
+    Flame flame(300, 500, 350, 70, 140);
 
     SDL_Event event;
     bool quit = false;
