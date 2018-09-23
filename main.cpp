@@ -42,7 +42,7 @@ int main() {
         exit(-1);
     }
 
-    Flame flame(500, 500, 350, 70, 200);
+    Flame flame(500, 500, 350, 70, 200, renderer);
 
     SDL_Event event;
     bool quit = false;
@@ -61,7 +61,7 @@ int main() {
             cnt++;
             SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
             SDL_RenderClear(renderer);
-            flame.update(renderer);
+            flame.update();
            if (clock() - last_frame >= CLOCKS_PER_SEC) {
                 if (fps_surface != nullptr) SDL_FreeSurface(fps_surface);
                 if (fps_texture != nullptr) SDL_DestroyTexture(fps_texture);
@@ -77,7 +77,6 @@ int main() {
             SDL_RenderPresent(renderer);
         }
     }
-    // SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     return 0;

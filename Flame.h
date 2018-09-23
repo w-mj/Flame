@@ -22,16 +22,18 @@ struct Particle {
 
 class Flame {
 public:
-    Flame(int p_cnt, int area_x, int area_y, int area_w, int area_h);
-    ~Flame() {}
-    void update(SDL_Renderer* renderer);
+    Flame(int p_cnt, int area_x, int area_y, int area_w, int area_h, SDL_Renderer*);
+    ~Flame();
+    void update();
 private:
     int particle_cnt;
     int area_x, area_y, area_w, area_h;
     std::vector<Particle> particles;
-
     void init_particle(Particle& p);
     void update_particle(Particle& p);
+    SDL_Texture *basic_pattern_texture;
+    SDL_Surface *basic_pattern_surface;
+    SDL_Renderer *renderer;
 };
 
 
