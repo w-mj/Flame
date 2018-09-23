@@ -6,7 +6,6 @@
 #include <unistd.h>
 #include "Flame.h"
 #include "pattern.c"
-
 #define CLOCKS_PER_MS ((uint)CLOCKS_PER_SEC / 1000)
 
 Flame::Flame(int p_cnt, int area_x, int area_y, int area_w, int area_h, SDL_Renderer* renderer):
@@ -21,23 +20,23 @@ Flame::Flame(int p_cnt, int area_x, int area_y, int area_w, int area_h, SDL_Rend
     for (int x = 0; x < p_cnt; x++) {
         init_particle(particles[x]);
     }
+
+    thread_parameter.instance = this;
+    thread_parameter.quit = false;
 }
+
 
 glm::vec2 add(const glm::vec2& a, const glm::vec2& b) {
   return {a.x + b.x, a.y + b.y};
 }
 
 void Flame::update() {
-    clock_t current_time = clock();
-    static clock_t last_update_time = 0;
-    if ((current_time - last_update_time) / CLOCKS_PER_MS >= 1) {
-        SDL_SetRenderDrawColor(renderer, 0xff, 0, 0, 0);
-        for (Particle& p: particles) {
-            update_particle(p);
-            SDL_Rect r = {static_cast<int>(p.position.x), static_cast<int>(p.position.y),
-                          static_cast<int>(p.size), static_cast<int>(p.size)};
-            SDL_RenderCopy(renderer, p.texture, nullptr, &r);
-        }
+    for (Particle& p: particles) {
+        update_particle(p);
+        SDL_Rect r = {static_cast<int>(p.position.x), static_cast<int>(p.position.y),
+                      static_cast<int>(p.size), static_cast<int>(p.size)};
+        SDL_RenderCopy(renderer, p.texture, nullptr, &r);
+
     }
 }
 
@@ -79,14 +78,13 @@ void Flame::update_particle(Particle &p) {
         init_particle(p);
     else {
         p.position = add(p.position, p.velocity);
-        Uint8 radio = static_cast<Uint8>((static_cast<float>(p.life) - p.age) / p.life * 255);
+        Uint8 radio = static_cast<Uint8>((static_cast<float>(p.life - p.age)) / p.life * 256);
         SDL_SetTextureAlphaMod(p.texture, radio);
-        //radio = radio << 4;
-        //SDL_SetTextureColorMod(p.texture, radio, radio, radio);
     }
 }
 
 Flame::~Flame() {
+    thread_parameter.quit = true;
     SDL_FreeSurface(basic_pattern_surface);
     SDL_DestroyTexture(basic_pattern_texture);
     for (Particle &p : particles)

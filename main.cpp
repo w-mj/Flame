@@ -40,7 +40,7 @@ int main() {
         exit(-1);
     }
 
-    Flame flame(500, 450, 200, 70, 200, renderer);
+    Flame flame(400, 450, 200, 70, 200, renderer);
 
     SDL_Event event;
     clock_t last_frame = clock();
@@ -86,7 +86,7 @@ int main() {
         if (fps_texture != nullptr)
             SDL_RenderCopy(renderer, fps_texture, nullptr, &text_area);
         SDL_RenderPresent(renderer);
-
+        SDL_Delay(1);
     }
 
     if (fps_surface != nullptr) SDL_FreeSurface(fps_surface);

@@ -18,6 +18,12 @@ struct Particle {
     float size;
     SDL_Texture *texture = nullptr;
 };
+class Flame;
+
+struct Parameter{
+    Flame* instance;
+    bool quit;
+};
 
 class Flame {
 public:
@@ -29,6 +35,9 @@ public:
 
     glm::vec2 wind_direction;
 
+    friend void update_t(void*);
+    Parameter thread_parameter;
+
 private:
     int particle_cnt;
     int area_x, area_y, area_w, area_h;
@@ -39,7 +48,10 @@ private:
     SDL_Surface *basic_pattern_surface;
     SDL_Renderer *renderer;
     bool windy = false;
+
+    SDL_Thread* update_thread;
 };
+
 
 
 #endif //FLAME_FLAME_H
