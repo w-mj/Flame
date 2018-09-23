@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include "Flame.h"
 #include "pattern.c"
+
 #define CLOCKS_PER_MS ((uint)CLOCKS_PER_SEC / 1000)
 
 Flame::Flame(int p_cnt, int area_x, int area_y, int area_w, int area_h, SDL_Renderer* renderer):
@@ -35,15 +36,16 @@ void Flame::update() {
             update_particle(p);
             SDL_Rect r = {static_cast<int>(p.position.x), static_cast<int>(p.position.y),
                           static_cast<int>(p.size), static_cast<int>(p.size)};
-            SDL_RenderCopy(renderer, basic_pattern_texture, nullptr, &r);
+            SDL_RenderCopy(renderer, p.texture, nullptr, &r);
         }
     }
 }
 
 
 void Flame::init_particle(Particle &p) {
+    static int mid_x = area_x + area_w / 2;
     static std::default_random_engine gen;
-    static std::normal_distribution<float> normal(area_x + area_w / 2, 11);
+    static std::normal_distribution<float> normal(mid_x, 11);
     static std::uniform_int_distribution<int> dis_h(area_y + area_h - 5, area_y + area_h);
     static std::uniform_real_distribution<float> percent(0, 1);
     static glm::vec2 max_velocity = {0, -1};
@@ -57,6 +59,11 @@ void Flame::init_particle(Particle &p) {
     p.life = life(gen);
     p.age = 0;
     p.alpha = 200;
+    p.texture = SDL_CreateTextureFromSurface(renderer, basic_pattern_surface);
+    Uint8 dist = static_cast<Uint8>(abs(p.position.x - mid_x));
+    Uint8 mod = 255 - dist * 2;
+    SDL_SetTextureAlphaMod(p.texture, mod);
+    SDL_SetTextureColorMod(p.texture, mod, mod << 1, 20);
 }
 
 
@@ -69,10 +76,16 @@ void Flame::update_particle(Particle &p) {
     else {
         // p.velocity = add(p.velocity, p.accelerate);
         p.position = add(p.position, p.velocity);
+        Uint8 radio = static_cast<Uint8>((static_cast<float>(p.life) - p.age) / p.life * 255);
+        SDL_SetTextureAlphaMod(p.texture, radio);
+        //radio = radio << 4;
+        //SDL_SetTextureColorMod(p.texture, radio, radio, radio);
     }
 }
 
 Flame::~Flame() {
     SDL_FreeSurface(basic_pattern_surface);
     SDL_DestroyTexture(basic_pattern_texture);
+    for (Particle &p : particles)
+        SDL_DestroyTexture(p.texture);
 }

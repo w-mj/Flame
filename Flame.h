@@ -18,6 +18,7 @@ struct Particle {
     int age, life;
     float size;
     int alpha;
+    SDL_Texture *texture;
 };
 
 class Flame {
