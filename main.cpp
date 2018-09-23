@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Flame.h"
 #include "wood.c"
+
 using namespace std;
 
 template<typename T>
