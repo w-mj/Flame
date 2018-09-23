@@ -1,36 +1,28 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include <iostream>
 #include "Flame.h"
+#include "wood.c"
 using namespace std;
-
-void get_text_and_rect(SDL_Renderer *renderer, int x, int y, char *text,
-                       TTF_Font *font, SDL_Texture **texture, SDL_Rect *rect) {
-    int text_width;
-    int text_height;
-    SDL_Surface *surface;
-    SDL_Color textColor = {255, 255, 255, 0};
-
-    surface = TTF_RenderText_Solid(font, text, textColor);
-    *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    text_width = surface->w;
-    text_height = surface->h;
-    SDL_FreeSurface(surface);
-    rect->x = x;
-    rect->y = y;
-    rect->w = text_width;
-    rect->h = text_height;
-}
-
 
 int main() {
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
         cout << SDL_GetError() << endl;
     }
     TTF_Init();
+    IMG_Init(IMG_INIT_PNG);
+
     SDL_Window *window = SDL_CreateWindow("Flame", 100, 100, 1024, 768, SDL_WINDOW_SHOWN);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_Color black = {0, 0, 0, 0xff};
+
+    SDL_Surface* image_surface = SDL_CreateRGBSurfaceWithFormatFrom(
+            gimp_image_wood.pixel_data, gimp_image_wood.width, gimp_image_wood.height, 32,
+            gimp_image_wood.bytes_per_pixel * gimp_image_wood.width, SDL_PIXELFORMAT_RGBA32);
+    SDL_Texture* image_texture = SDL_CreateTextureFromSurface(renderer, image_surface);
+    SDL_Rect wood_area = {440, 400, image_surface->w, image_surface->h / 2};
+
 #ifdef linux
     TTF_Font *font = TTF_OpenFont("/usr/share/fonts/arial.ttf", 16);
 #endif
@@ -42,7 +34,7 @@ int main() {
         exit(-1);
     }
 
-    Flame flame(500, 500, 350, 70, 200, renderer);
+    Flame flame(500, 450, 200, 70, 200, renderer);
 
     SDL_Event event;
     bool quit = false;
@@ -61,6 +53,7 @@ int main() {
             cnt++;
             SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
             SDL_RenderClear(renderer);
+            SDL_RenderCopy(renderer, image_texture, nullptr, &wood_area);
             flame.update();
            if (clock() - last_frame >= CLOCKS_PER_SEC) {
                 if (fps_surface != nullptr) SDL_FreeSurface(fps_surface);
@@ -77,6 +70,12 @@ int main() {
             SDL_RenderPresent(renderer);
         }
     }
+
+    if (fps_surface != nullptr) SDL_FreeSurface(fps_surface);
+    if (fps_texture != nullptr) SDL_DestroyTexture(fps_texture);
+    TTF_CloseFont(font);
+    SDL_FreeSurface(image_surface);
+    SDL_DestroyTexture(image_texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     return 0;
