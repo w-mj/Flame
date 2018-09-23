@@ -62,6 +62,7 @@ void Flame::init_particle(Particle &p) {
     p.size = 9;
     p.life = life(gen);
     p.age = 0;
+    if (p.texture != nullptr) SDL_DestroyTexture(p.texture);
     p.texture = SDL_CreateTextureFromSurface(renderer, basic_pattern_surface);
     Uint8 dist = static_cast<Uint8>(abs(p.position.x - mid_x));
     Uint8 mod = 255 - dist * 2;

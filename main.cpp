@@ -5,6 +5,13 @@
 #include "wood.c"
 using namespace std;
 
+template<typename T>
+T limit(T a, T min, T max) {
+    if (a < min) return min;
+    if (a > max) return max;
+    return a;
+}
+
 int main() {
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
         cout << SDL_GetError() << endl;
@@ -53,7 +60,10 @@ int main() {
             if (event.button.button == SDL_BUTTON_LEFT)
                 flame.stop_blowing();
         } else if (event.type == SDL_MOUSEMOTION) {
-            flame.wind_direction = {(485 - event.motion.x) / 200, (400 - event.motion.y) / 200};
+            double dist = sqrt(pow(event.motion.x - 485, 2) + pow(event.motion.y - 400, 2));
+            double force_x = 1.5 * (485 - event.motion.x) / dist;
+            double force_y = 1.5 * (400 - event.motion.y) / dist;
+            flame.wind_direction = {force_x, force_y};
         }
 
         cnt++;

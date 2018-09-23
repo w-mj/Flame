@@ -16,7 +16,7 @@ struct Particle {
     glm::vec2 velocity;
     int age, life;
     float size;
-    SDL_Texture *texture;
+    SDL_Texture *texture = nullptr;
 };
 
 class Flame {
