@@ -13,11 +13,9 @@
 
 struct Particle {
     glm::vec2 position;
-    glm::vec2 accelerate;
     glm::vec2 velocity;
     int age, life;
     float size;
-    int alpha;
     SDL_Texture *texture;
 };
 
@@ -26,6 +24,11 @@ public:
     Flame(int p_cnt, int area_x, int area_y, int area_w, int area_h, SDL_Renderer*);
     ~Flame();
     void update();
+    void blowing();
+    void stop_blowing();
+
+    glm::vec2 wind_direction;
+
 private:
     int particle_cnt;
     int area_x, area_y, area_w, area_h;
@@ -35,6 +38,7 @@ private:
     SDL_Texture *basic_pattern_texture;
     SDL_Surface *basic_pattern_surface;
     SDL_Renderer *renderer;
+    bool windy = false;
 };
 
 

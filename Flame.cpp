@@ -52,13 +52,16 @@ void Flame::init_particle(Particle &p) {
     static std::uniform_int_distribution<int> life(0, 200);
 
     p.position = {normal(gen), dis_h(gen)};
-    p.velocity = {max_velocity.x * percent(gen), max_velocity.y * percent(gen)};
-    p.accelerate = {0, -0.01};
-    p.alpha = 255;
+    p.velocity = {0, max_velocity.y * percent(gen)};
+    if (windy) {
+        p.velocity.x = p.velocity.x + wind_direction.x;
+        p.velocity.y = p.velocity.y + wind_direction.y;
+        if (p.velocity.x > 1) p.velocity.x = 1;
+        if (p.velocity.y < -1) p.velocity.y = -1;
+    }
     p.size = 9;
     p.life = life(gen);
     p.age = 0;
-    p.alpha = 200;
     p.texture = SDL_CreateTextureFromSurface(renderer, basic_pattern_surface);
     Uint8 dist = static_cast<Uint8>(abs(p.position.x - mid_x));
     Uint8 mod = 255 - dist * 2;
@@ -70,11 +73,10 @@ void Flame::init_particle(Particle &p) {
 void Flame::update_particle(Particle &p) {
     p.age += 1;
     if (p.age > p.life ||
-        p.position.x < area_x || p.position.x > area_x + area_w ||
+        p.position.x < 10 || p.position.x > 1000 ||
         p.position.y < area_y || p.position.y > area_y + area_h)
         init_particle(p);
     else {
-        // p.velocity = add(p.velocity, p.accelerate);
         p.position = add(p.position, p.velocity);
         Uint8 radio = static_cast<Uint8>((static_cast<float>(p.life) - p.age) / p.life * 255);
         SDL_SetTextureAlphaMod(p.texture, radio);
@@ -88,4 +90,26 @@ Flame::~Flame() {
     SDL_DestroyTexture(basic_pattern_texture);
     for (Particle &p : particles)
         SDL_DestroyTexture(p.texture);
+}
+
+void Flame::blowing() {
+    if (!windy) {
+        for (Particle &p: particles) {
+            p.velocity.x = p.velocity.x + wind_direction.x;
+            p.velocity.y = p.velocity.y + wind_direction.y;
+            if (p.velocity.x > 1) p.velocity.x = 1;
+            if (p.velocity.y < -1) p.velocity.y = -1;
+        }
+        windy = true;
+    }
+}
+
+void Flame::stop_blowing() {
+    static std::default_random_engine gen;
+    static std::uniform_real_distribution<float> percent(0, 1);
+    for (Particle& p: particles) {
+        p.velocity.x = 0;
+        p.velocity.y = -percent(gen);
+    }
+    windy = false;
 }

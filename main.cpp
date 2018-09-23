@@ -1,6 +1,5 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
 #include <iostream>
 #include "Flame.h"
 #include "wood.c"
@@ -11,7 +10,6 @@ int main() {
         cout << SDL_GetError() << endl;
     }
     TTF_Init();
-    IMG_Init(IMG_INIT_PNG);
 
     SDL_Window *window = SDL_CreateWindow("Flame", 100, 100, 1024, 768, SDL_WINDOW_SHOWN);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -37,38 +35,47 @@ int main() {
     Flame flame(500, 450, 200, 70, 200, renderer);
 
     SDL_Event event;
-    bool quit = false;
     clock_t last_frame = clock();
     char fps_text[10];
     uint cnt = 0;
     SDL_Surface *fps_surface = nullptr;
     SDL_Texture *fps_texture = nullptr;
     SDL_Rect text_area = {0, 0, 0, 0};
-    while (!quit) {
+    while (true) {
         SDL_PollEvent(&event);
         if (event.type == SDL_QUIT) {
             cout << "Quit Event";
-            quit = true;
-        } else {
-            cnt++;
-            SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
-            SDL_RenderClear(renderer);
-            SDL_RenderCopy(renderer, image_texture, nullptr, &wood_area);
-            flame.update();
-           if (clock() - last_frame >= CLOCKS_PER_SEC) {
-                if (fps_surface != nullptr) SDL_FreeSurface(fps_surface);
-                if (fps_texture != nullptr) SDL_DestroyTexture(fps_texture);
-                last_frame = clock();
-                sprintf(fps_text, "%-5dfps", cnt);
-                fps_surface = TTF_RenderText_Solid(font, fps_text, black);
-                fps_texture = SDL_CreateTextureFromSurface(renderer, fps_surface);
-                text_area = {0, 0, fps_surface->w, fps_surface->h};
-                cnt = 0;
-            }
-            if (fps_texture != nullptr)
-                SDL_RenderCopy(renderer, fps_texture, nullptr, &text_area);
-            SDL_RenderPresent(renderer);
+            break;
+        } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+            if (event.button.button == SDL_BUTTON_LEFT)
+                flame.blowing();
+        } else if (event.type == SDL_MOUSEBUTTONUP) {
+            if (event.button.button == SDL_BUTTON_LEFT)
+                flame.stop_blowing();
+        } else if (event.type == SDL_MOUSEMOTION) {
+            flame.wind_direction = {(485 - event.motion.x) / 200, (400 - event.motion.y) / 200};
         }
+
+        cnt++;
+        SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, image_texture, nullptr, &wood_area);
+        flame.update();
+
+        if (clock() - last_frame >= CLOCKS_PER_SEC) {
+            if (fps_surface != nullptr) SDL_FreeSurface(fps_surface);
+            if (fps_texture != nullptr) SDL_DestroyTexture(fps_texture);
+            last_frame = clock();
+            sprintf(fps_text, "%-5dfps", cnt);
+            fps_surface = TTF_RenderText_Solid(font, fps_text, black);
+            fps_texture = SDL_CreateTextureFromSurface(renderer, fps_surface);
+            text_area = {0, 0, fps_surface->w, fps_surface->h};
+            cnt = 0;
+        }
+        if (fps_texture != nullptr)
+            SDL_RenderCopy(renderer, fps_texture, nullptr, &text_area);
+        SDL_RenderPresent(renderer);
+
     }
 
     if (fps_surface != nullptr) SDL_FreeSurface(fps_surface);
