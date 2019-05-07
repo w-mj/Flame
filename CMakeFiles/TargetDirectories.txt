@@ -1,0 +1,3 @@
+/home/wmj/Projects/flame/CMakeFiles/rebuild_cache.dir
+/home/wmj/Projects/flame/CMakeFiles/flame.dir
+/home/wmj/Projects/flame/CMakeFiles/edit_cache.dir

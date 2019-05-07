@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/flame.dir/main.cpp.o CMakeFiles/flame.dir/Flame.cpp.o  -o flame -lSDL2 -lSDL2_ttf 

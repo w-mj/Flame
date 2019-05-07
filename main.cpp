@@ -30,7 +30,7 @@ int main() {
     SDL_Rect wood_area = {440, 400, image_surface->w, image_surface->h / 2};
 
 #ifdef linux
-    TTF_Font *font = TTF_OpenFont("/usr/share/fonts/arial.ttf", 16);
+    TTF_Font *font = TTF_OpenFont("./arial.ttf", 16);
 #endif
 #ifdef win32
     TTF_Font *font = nullptr;

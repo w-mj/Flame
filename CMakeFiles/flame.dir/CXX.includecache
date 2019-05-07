@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/wmj/Projects/flame/Flame.h
+glm/glm.hpp
+-
+SDL2/SDL.h
+-
+vector
+-
+random
+-
+ctime
+-
+
+/home/wmj/Projects/flame/main.cpp
+SDL2/SDL.h
+-
+SDL2/SDL_ttf.h
+-
+iostream
+-
+Flame.h
+/home/wmj/Projects/flame/Flame.h
+wood.c
+/home/wmj/Projects/flame/wood.c
+
+/home/wmj/Projects/flame/wood.c
+
